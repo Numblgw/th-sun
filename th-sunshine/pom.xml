@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>th-sun</artifactId>
+    <groupId>com.tianhuo</groupId>
+    <version>2019120401</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>th-sunshine</artifactId>
+
+  <!--deploy到本地仓库-->
+  <distributionManagement>
+    <repository>
+      <id>localRepository</id>
+      <url>file:/Users/liguowei/.m2/repository</url>
+    </repository>
+  </distributionManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.tianhuo</groupId>
+      <artifactId>th-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.tianhuo</groupId>
+      <artifactId>th-common</artifactId>
+      <version>2019120301</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tianhuo</groupId>
+      <artifactId>th-common</artifactId>
+      <version>2019120401</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+</project>

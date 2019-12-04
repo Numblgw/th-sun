@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      max-active: 20
+      min-idle: 5
+      max-wait: 3000
+      pool-prepared-statements: false
+      max-open-prepared-statements: -1
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      max-evictable-idle-time-millis: 400000
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://47.102.195.50:3306/tianhuo?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: TianHuo
+  data:
+    mongodb:
+      host: 47.102.195.50
+      port: 27017
+      database: tianhuo
+
+mybatis:
+  type-aliases-package: com.tianhuo.thbase.port.persistence.entity
+  configuration:
+    map-underscore-to-camel-case: true
