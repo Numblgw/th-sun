@@ -1,2 +1,4 @@
 # Project exclude paths
 /th-sunshine/target/
+.idea
+.mvn
