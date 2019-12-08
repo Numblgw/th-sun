@@ -1,7 +1,7 @@
 package com.tianhuo.thkernel.domain.role.repository;
 
+import com.tianhuo.thkernel.domain.role.Role;
 import com.tianhuo.thkernel.port.persistence.entity.RoleDO;
-import com.tianhuo.thcommon.domain.Role;
 import com.tianhuo.thcommon.utils.StringUtil;
 
 /**

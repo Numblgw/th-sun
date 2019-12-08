@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ public interface ArticleExcerptMapper {
    * @return article excerpt list
    */
   @Select("<script> "
-      + "select id, title, category_id, category_name, tags, excerpt, create_at, modify_at "
+      + "select id, sender_id, title, category_id, category_name, tags, excerpt, create_at, modify_at "
       + "from article_excerpt "
       + "where id in "
       + "<foreach item='item' collection='ids' open='(' separator=', ' close=')'> "
@@ -39,7 +40,7 @@ public interface ArticleExcerptMapper {
    * @return article list
    */
   @Select(
-      "select id, title, category_id, category_name, tags, excerpt, create_at, modify_at "
+      "select id, sender_id, title, category_id, category_name, tags, excerpt, create_at, modify_at "
       + "from article_excerpt "
       + "where id > #{start} limit #{limit}"
   )
@@ -51,7 +52,7 @@ public interface ArticleExcerptMapper {
    * @return article excerpt data object
    */
   @Select(
-      "select id, title, category_id, category_name, tags, excerpt, create_at, modify_at "
+      "select id, sender_id, title, category_id, category_name, tags, excerpt, create_at, modify_at "
           + "from article_excerpt "
           + "where id = #{id}"
   )
@@ -75,8 +76,24 @@ public interface ArticleExcerptMapper {
    */
   @Insert(
       "insert into "
-      + "article_excerpt(title, category_id, category_name, tags, excerpt, create_at, modify_at) "
-      + "values(#{title}, #{categoryId}, #{categoryName}, #{tags}, #{excerpt}, #{createAt}, #{modifyAt})"
+      + "article_excerpt(sender_id, title, category_id, category_name, tags, excerpt, create_at, modify_at) "
+      + "values(#{senderId}, #{title}, #{categoryId}, #{categoryName}, #{tags}, #{excerpt}, #{createAt}, #{modifyAt})"
   )
   void insert(ArticleExcerptDO articleExcerptDO);
+
+  /**
+   * count article by user id
+   * @param userId user id
+   * @return article count
+   */
+  @Select("select count(*) from article_excerpt where sender_id = #{userId}")
+  Integer countByUser(Long userId);
+
+  /**
+   * get last publishing date by user id
+   * @param userId user id
+   * @return last publish date
+   */
+  @Select("select max(create_at) from article_excerpt where sender_id = #{userId}")
+  LocalDateTime getLastPublishingDate(Long userId);
 }

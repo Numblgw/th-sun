@@ -9,6 +9,8 @@ import com.tianhuo.thcommon.exception.TianHuoBaseException;
  */
 public class ArticleDetailNotFoundException extends TianHuoBaseException {
 
+  private static final long serialVersionUID = 7807684949211268007L;
+
   /**
    * default message for this exception
    */

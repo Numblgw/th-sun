@@ -19,6 +19,11 @@ public class ArticleExcerptDO {
   private Long id;
 
   /**
+   * sender id
+   */
+  private Long senderId;
+
+  /**
    * title
    */
   private String title;

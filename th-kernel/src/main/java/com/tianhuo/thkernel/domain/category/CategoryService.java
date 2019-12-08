@@ -1,7 +1,5 @@
 package com.tianhuo.thkernel.domain.category;
 
-import com.tianhuo.thcommon.domain.Category;
-
 import java.util.List;
 
 /**

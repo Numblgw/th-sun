@@ -1,7 +1,6 @@
 package com.tianhuo.thkernel.domain.article;
 
-import com.tianhuo.thcommon.domain.Article;
-
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -44,4 +43,18 @@ public interface ArticleService {
    * @param id article id
    */
   void delete(Long id);
+
+  /**
+   * count article by user id
+   * @param userId user id
+   * @return article count
+   */
+  Integer countByUserId(Long userId);
+
+  /**
+   * get last publishing date by user
+   * @param userId user id
+   * @return last publishing date
+   */
+  LocalDateTime getLastPublishingDateByUser(Long userId);
 }

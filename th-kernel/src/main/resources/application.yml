@@ -25,6 +25,21 @@ spring:
       database: tianhuo
 
 mybatis:
-  type-aliases-package: com.tianhuo.thbase.port.persistence.entity
+  type-aliases-package: com.tianhuo.thkernel.port.persistence.entity
   configuration:
     map-underscore-to-camel-case: true
+
+dubbo:
+  protocol:
+    name: dubbo
+    port: 20880
+  application:
+    name: th-kernel
+  registry:
+    protocol: zookeeper
+    address: 47.102.195.50
+    port: 2181
+  consumer:
+    timeout: 3000
+  scan:
+    base-packages: com.tianhuo.thkernel.port.facade

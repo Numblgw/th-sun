@@ -1,6 +1,7 @@
 package com.tianhuo.thkernel.Infrastructure.config;
 
-import com.tianhuo.thcommon.domain.Article;
+import com.tianhuo.thkernel.domain.article.Article;
+import com.tianhuo.thkernel.domain.user.User;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,14 @@ public class RedisConfig {
 
   @Bean
   RedisTemplate<String, Article> articleRedisTemplate(RedisConnectionFactory redisConnectionFactory)
+      throws UnknownHostException {
+    RedisTemplate redisTemplate = new RedisTemplate();
+    redisTemplate.setConnectionFactory(redisConnectionFactory);
+    return redisTemplate;
+  }
+
+  @Bean
+  RedisTemplate<String, User> userRedisTemplate(RedisConnectionFactory redisConnectionFactory)
       throws UnknownHostException {
     RedisTemplate redisTemplate = new RedisTemplate();
     redisTemplate.setConnectionFactory(redisConnectionFactory);

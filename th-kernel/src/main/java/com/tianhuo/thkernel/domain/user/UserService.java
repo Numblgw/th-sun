@@ -1,7 +1,5 @@
 package com.tianhuo.thkernel.domain.user;
 
-import com.tianhuo.thcommon.domain.User;
-
 /**
  * 用户领域模型
  * @author liguowei

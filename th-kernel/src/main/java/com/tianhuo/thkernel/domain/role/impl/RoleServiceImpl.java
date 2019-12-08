@@ -1,8 +1,8 @@
 package com.tianhuo.thkernel.domain.role.impl;
 
+import com.tianhuo.thkernel.domain.role.Role;
 import com.tianhuo.thkernel.domain.role.RoleService;
 import com.tianhuo.thkernel.domain.role.repository.RoleRepository;
-import com.tianhuo.thcommon.domain.Role;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

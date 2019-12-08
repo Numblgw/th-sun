@@ -1,7 +1,7 @@
 package com.tianhuo.thkernel.domain.category.repository;
 
+import com.tianhuo.thkernel.domain.category.Category;
 import com.tianhuo.thkernel.port.persistence.entity.CategoryDO;
-import com.tianhuo.thcommon.domain.Category;
 
 /**
  * category to category data object converter

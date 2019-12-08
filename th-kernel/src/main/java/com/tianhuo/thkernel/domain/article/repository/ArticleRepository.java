@@ -1,11 +1,11 @@
 package com.tianhuo.thkernel.domain.article.repository;
 
 import com.tianhuo.sunshine.exception.ArticleDetailNotFoundException;
+import com.tianhuo.thkernel.domain.article.Article;
 import com.tianhuo.thkernel.port.persistence.dao.mongo.ArticleDetailDao;
 import com.tianhuo.thkernel.port.persistence.dao.mysql.ArticleExcerptMapper;
 import com.tianhuo.thkernel.port.persistence.entity.ArticleDetailDO;
 import com.tianhuo.thkernel.port.persistence.entity.ArticleExcerptDO;
-import com.tianhuo.thcommon.domain.Article;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -124,6 +125,14 @@ public class ArticleRepository {
     articleRedisTemplate.delete(singleCacheKey(id));
     articleExcerptMapper.delete(id);
     articleDetailDao.delete(String.valueOf(id));
+  }
+
+  public Integer countByUser(Long userId) {
+    return articleExcerptMapper.countByUser(userId);
+  }
+
+  public LocalDateTime getLastPublishingDate(Long userId) {
+    return articleExcerptMapper.getLastPublishingDate(userId);
   }
 
   /**

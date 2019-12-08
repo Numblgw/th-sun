@@ -4,6 +4,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.2.1.RELEASE</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+
   <groupId>com.tianhuo</groupId>
   <artifactId>th-sun</artifactId>
   <packaging>pom</packaging>
@@ -15,7 +22,7 @@
   <!--设置编译使用的字符集-->
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <th-common.version>2019120401</th-common.version>
+    <th-common.version>2019120402</th-common.version>
   </properties>
 
   <dependencies>
@@ -23,6 +30,12 @@
       <groupId>com.tianhuo</groupId>
       <artifactId>th-common</artifactId>
       <version>${th-common.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.10</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

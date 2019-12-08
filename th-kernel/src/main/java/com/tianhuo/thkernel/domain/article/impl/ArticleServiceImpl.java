@@ -7,6 +7,7 @@ import com.tianhuo.thcommon.domain.Article;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -71,5 +72,21 @@ public class ArticleServiceImpl implements ArticleService {
       return;
     }
     articleRepository.delete(id);
+  }
+
+  @Override
+  public Integer countByUserId(Long userId) {
+    if(null == userId) {
+      return 0;
+    }
+    return articleRepository.countByUser(userId);
+  }
+
+  @Override
+  public LocalDateTime getLastPublishingDateByUser(Long userId) {
+    if(null == userId) {
+      return null;
+    }
+    return articleRepository.getLastPublishingDate(userId);
   }
 }

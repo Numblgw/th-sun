@@ -1,13 +1,14 @@
 package com.tianhuo.thkernel.domain.category.impl;
 
+import com.tianhuo.thkernel.domain.category.Category;
 import com.tianhuo.thkernel.domain.category.CategoryService;
 import com.tianhuo.thkernel.domain.category.repository.CategoryRepository;
-import com.tianhuo.thcommon.domain.Category;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 
 /**
  * user service

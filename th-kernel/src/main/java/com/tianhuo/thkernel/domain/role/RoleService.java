@@ -1,7 +1,5 @@
 package com.tianhuo.thkernel.domain.role;
 
-import com.tianhuo.thcommon.domain.Role;
-
 import java.util.List;
 
 /**

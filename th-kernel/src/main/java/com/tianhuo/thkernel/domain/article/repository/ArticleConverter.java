@@ -1,10 +1,10 @@
 package com.tianhuo.thkernel.domain.article.repository;
 
 import com.google.common.collect.Lists;
+import com.tianhuo.thkernel.domain.article.Article;
+import com.tianhuo.thkernel.domain.category.Category;
 import com.tianhuo.thkernel.port.persistence.entity.ArticleDetailDO;
 import com.tianhuo.thkernel.port.persistence.entity.ArticleExcerptDO;
-import com.tianhuo.thcommon.domain.Article;
-import com.tianhuo.thcommon.domain.Category;
 import com.tianhuo.thcommon.utils.StringUtil;
 
 
@@ -14,7 +14,7 @@ import com.tianhuo.thcommon.utils.StringUtil;
  * @author liguowei
  * @date 2019-11-24 11:14:43
  */
-public class ArticleConverter {
+class ArticleConverter {
 
   /**
    * assemble article
@@ -25,6 +25,7 @@ public class ArticleConverter {
   static Article assemble(ArticleExcerptDO articleExcerpt, ArticleDetailDO articleDetail) {
     return new Article(
         String.valueOf(articleExcerpt.getId()),
+        String.valueOf(articleExcerpt.getSenderId()),
         articleExcerpt.getTitle(),
         new Category(articleExcerpt.getCategoryId(), articleExcerpt.getCategoryName()),
         Lists.newArrayList(articleExcerpt.getTags().split(",")),
@@ -48,6 +49,7 @@ public class ArticleConverter {
 
     ArticleExcerptDO articleExcerpt = new ArticleExcerptDO();
     articleExcerpt.setId(StringUtil.convertToLong(article.getId(), 0L));
+    articleExcerpt.setSenderId(StringUtil.convertToLong(article.getSenderId(), 0L));
     articleExcerpt.setTitle(article.getTitle());
     articleExcerpt.setCategoryId(article.getCategory().getId());
     articleExcerpt.setCategoryName(article.getCategory().getName());
@@ -79,6 +81,7 @@ public class ArticleConverter {
   static Article convertToArticleBy(ArticleExcerptDO articleExcerpt) {
     return new Article(
         String.valueOf(articleExcerpt.getId()),
+        String.valueOf(articleExcerpt.getSenderId()),
         articleExcerpt.getTitle(),
         new Category(articleExcerpt.getCategoryId(), articleExcerpt.getCategoryName()),
         Lists.newArrayList(articleExcerpt.getTags().split(",")),

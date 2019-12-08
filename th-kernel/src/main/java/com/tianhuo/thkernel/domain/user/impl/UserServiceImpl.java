@@ -1,10 +1,11 @@
 package com.tianhuo.thkernel.domain.user.impl;
 
+import com.tianhuo.thkernel.domain.user.User;
 import com.tianhuo.thkernel.domain.user.UserService;
 import com.tianhuo.thkernel.domain.user.repository.UserRepository;
-import com.tianhuo.thcommon.domain.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 /**

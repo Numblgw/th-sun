@@ -1,7 +1,7 @@
 package com.tianhuo.thkernel.domain.user.repository;
 
+import com.tianhuo.thkernel.domain.user.User;
 import com.tianhuo.thkernel.port.persistence.entity.UserDO;
-import com.tianhuo.thcommon.domain.User;
 import com.tianhuo.thcommon.utils.StringUtil;
 
 /**
@@ -10,14 +10,17 @@ import com.tianhuo.thcommon.utils.StringUtil;
  * @author liguowei
  * @date 2019-12-03 16:54:01
  */
-public class UserConverter {
+class UserConverter {
 
   /**
    * UserDO to User
    * @param userEntity user data object
    * @return user domain object
    */
-  public static User convert(UserDO userEntity) {
+  static User convert(UserDO userEntity) {
+    if(null == userEntity) {
+      return null;
+    }
     return new User(
         String.valueOf(userEntity.getId()),
         userEntity.getUsername(),
@@ -33,7 +36,7 @@ public class UserConverter {
    * @param user user domain object
    * @return user data object
    */
-  public static UserDO convert(User user) {
+  static UserDO convert(User user) {
     UserDO userEntity = new UserDO();
     userEntity.setId(StringUtil.convertToLong(user.getId(), 0));
     userEntity.setUsername(user.getUsername());
