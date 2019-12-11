@@ -24,7 +24,7 @@ public interface ArticleExcerptMapper {
    * @return article excerpt list
    */
   @Select("<script> "
-      + "select id, sender_id, title, category_id, category_name, tags, excerpt, create_at, modify_at "
+      + "select id, sender_id, title, category_id, tags, excerpt, create_at, modify_at "
       + "from article_excerpt "
       + "where id in "
       + "<foreach item='item' collection='ids' open='(' separator=', ' close=')'> "
@@ -40,7 +40,7 @@ public interface ArticleExcerptMapper {
    * @return article list
    */
   @Select(
-      "select id, sender_id, title, category_id, category_name, tags, excerpt, create_at, modify_at "
+      "select id, sender_id, title, category_id, tags, excerpt, create_at, modify_at "
       + "from article_excerpt "
       + "where id > #{start} limit #{limit}"
   )
@@ -52,7 +52,7 @@ public interface ArticleExcerptMapper {
    * @return article excerpt data object
    */
   @Select(
-      "select id, sender_id, title, category_id, category_name, tags, excerpt, create_at, modify_at "
+      "select id, sender_id, title, category_id, tags, excerpt, create_at, modify_at "
           + "from article_excerpt "
           + "where id = #{id}"
   )
@@ -76,7 +76,7 @@ public interface ArticleExcerptMapper {
    */
   @Insert(
       "insert into "
-      + "article_excerpt(sender_id, title, category_id, category_name, tags, excerpt, create_at, modify_at) "
+      + "article_excerpt(sender_id, title, category_id, tags, excerpt, create_at, modify_at) "
       + "values(#{senderId}, #{title}, #{categoryId}, #{categoryName}, #{tags}, #{excerpt}, #{createAt}, #{modifyAt})"
   )
   void insert(ArticleExcerptDO articleExcerptDO);

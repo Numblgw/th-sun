@@ -1,10 +1,16 @@
 package com.tianhuo.thkernel.domain.category;
 
+import com.tianhuo.sunshine.exception.CategoryUpdateFailException;
 import com.tianhuo.thcommon.utils.CheckUtil;
+import com.tianhuo.thkernel.application.cmd.CategoryUpdateCmd;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+
+import org.springframework.util.StringUtils;
+
+import java.util.Objects;
 
 /**
  * category entity
@@ -31,6 +37,25 @@ public class Category {
     this.name = name;
   }
 
+  /**
+   * update this category
+   * @param cmd update command
+   */
+  public void update(CategoryUpdateCmd cmd) {
+    if(null == cmd) {
+      throw new CategoryUpdateFailException("category update cmd is null");
+    }
+    if(!Objects.equals(this.id, cmd.getId())) {
+      throw new CategoryUpdateFailException("category id != cmd id");
+    }
+    if(!StringUtils.isEmpty(cmd.getName())) {
+      this.name = cmd.getName();
+    }
+  }
+
+  /**
+   * check this entity complete
+   */
   private void check() {
     CheckUtil.notNull(this.id, "category id is null");
     CheckUtil.notNull(this.name, "category name is null");

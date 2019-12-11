@@ -34,11 +34,6 @@ public class ArticleExcerptDO {
   private Integer categoryId;
 
   /**
-   * category name
-   */
-  private String categoryName;
-
-  /**
    * tags split by ','
    */
   private String tags;

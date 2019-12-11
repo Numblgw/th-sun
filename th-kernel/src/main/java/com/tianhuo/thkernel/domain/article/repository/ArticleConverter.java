@@ -2,7 +2,6 @@ package com.tianhuo.thkernel.domain.article.repository;
 
 import com.google.common.collect.Lists;
 import com.tianhuo.thkernel.domain.article.Article;
-import com.tianhuo.thkernel.domain.category.Category;
 import com.tianhuo.thkernel.port.persistence.entity.ArticleDetailDO;
 import com.tianhuo.thkernel.port.persistence.entity.ArticleExcerptDO;
 import com.tianhuo.thcommon.utils.StringUtil;
@@ -27,8 +26,8 @@ class ArticleConverter {
         String.valueOf(articleExcerpt.getId()),
         String.valueOf(articleExcerpt.getSenderId()),
         articleExcerpt.getTitle(),
-        new Category(articleExcerpt.getCategoryId(), articleExcerpt.getCategoryName()),
-        Lists.newArrayList(articleExcerpt.getTags().split(",")),
+        String.valueOf(articleExcerpt.getCategoryId()),
+        Article.getTagListByString(articleExcerpt.getTags()),
         articleDetail.getDetail(),
         articleExcerpt.getCreateAt(),
         articleExcerpt.getModifyAt()
@@ -41,19 +40,12 @@ class ArticleConverter {
    * @return article excerpt object
    */
   static ArticleExcerptDO convertToArticleExcerpt(Article article) {
-    // 转换 tags
-    StringBuilder stringBuilder = new StringBuilder();
-    for (String tag : article.getTags()) {
-      stringBuilder.append(tag);
-    }
-
     ArticleExcerptDO articleExcerpt = new ArticleExcerptDO();
     articleExcerpt.setId(StringUtil.convertToLong(article.getId(), 0L));
     articleExcerpt.setSenderId(StringUtil.convertToLong(article.getSenderId(), 0L));
     articleExcerpt.setTitle(article.getTitle());
-    articleExcerpt.setCategoryId(article.getCategory().getId());
-    articleExcerpt.setCategoryName(article.getCategory().getName());
-    articleExcerpt.setTags(stringBuilder.toString());
+    articleExcerpt.setCategoryId(StringUtil.convertToLong(article.getCategoryId(), 0L).intValue());
+    articleExcerpt.setTags(article.getTagsString());
     articleExcerpt.setExcerpt(article.getExcerpt());
     articleExcerpt.setCreateAt(article.getCreateAt());
     articleExcerpt.setModifyAt(article.getModifyAt());
@@ -83,7 +75,7 @@ class ArticleConverter {
         String.valueOf(articleExcerpt.getId()),
         String.valueOf(articleExcerpt.getSenderId()),
         articleExcerpt.getTitle(),
-        new Category(articleExcerpt.getCategoryId(), articleExcerpt.getCategoryName()),
+        String.valueOf(articleExcerpt.getCategoryId()),
         Lists.newArrayList(articleExcerpt.getTags().split(",")),
         articleExcerpt.getExcerpt(),
         articleExcerpt.getCreateAt(),
