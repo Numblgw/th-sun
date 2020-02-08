@@ -1,8 +1,10 @@
 package com.tianhuo.sunshine.service;
 
 import com.tianhuo.sunshine.dto.UserDto;
+import com.tianhuo.sunshine.enums.UserOperateResult;
 import com.tianhuo.thcommon.dto.HttpResultWrapper;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,29 +15,30 @@ import java.util.List;
 public interface UserFacade {
 
   /**
-   * query user by id
-   * @param id user id
-   * @return user dto with wrapper
+   * register
+   * @param userDto user info to register
+   * @return user id
    */
-  HttpResultWrapper<UserDto> queryById(String id);
+  HttpResultWrapper<UserDto> register(UserDto userDto);
 
   /**
-   * query user by username
-   * @param username username
-   * @return usr dto with wrapper
+   * login
+   * @param userDto user info
+   * @return
    */
-  HttpResultWrapper<UserDto> queryByUsername(String username);
+  HttpResultWrapper<UserDto> login(UserDto userDto);
 
   /**
-   * get admin user list
-   * @return user dto list with wrapper
+   * update user
+   * @param userDto user dto
+   * @return true or false
    */
-  HttpResultWrapper<List<UserDto>> queryAdminList();
+  HttpResultWrapper<UserDto> update(UserDto userDto);
 
   /**
-   * add one user
-   * @param userDto user object to save
-   * @return if success return Boolean.TRUE else return Boolean.FALSE
+   * query users by ids
+   * @param ids collection of user id
+   * @return list of user
    */
-  HttpResultWrapper addUser(UserDto userDto);
+  HttpResultWrapper<List<UserDto>> queryUsers(Collection<String> ids);
 }

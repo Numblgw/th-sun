@@ -57,7 +57,6 @@ public class Category {
    * check this entity complete
    */
   private void check() {
-    CheckUtil.notNull(this.id, "category id is null");
     CheckUtil.notNull(this.name, "category name is null");
   }
 }

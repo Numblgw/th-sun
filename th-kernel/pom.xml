@@ -8,7 +8,6 @@
     <groupId>com.tianhuo</groupId>
     <version>2019120401</version>
   </parent>
-  <groupId>com.tianhuo</groupId>
   <artifactId>th-kernel</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>th-kernel</name>
@@ -16,11 +15,10 @@
 
   <properties>
     <java.version>1.8</java.version>
-    <springboot.version>2.2.1.RELEASE</springboot.version>
     <dubbo.version>2.6.5</dubbo.version>
     <dubbo-springboot.version>0.2.1.RELEASE</dubbo-springboot.version>
     <curator.version>4.2.0</curator.version>
-    <th-sunshine.version>2019120401</th-sunshine.version>
+    <th-sunshine.version>2020012501</th-sunshine.version>
   </properties>
 
   <dependencies>
@@ -89,22 +87,18 @@
       <version>${dubbo.version}</version>
     </dependency>
 
-<!--    <dependency>-->
-<!--      <groupId>io.netty</groupId>-->
-<!--      <artifactId>netty-all</artifactId>-->
-<!--    </dependency>-->
-
-<!--    <dependency>-->
-<!--      <groupId>org.apache.zookeeper</groupId>-->
-<!--      <artifactId>zookeeper</artifactId>-->
-<!--      <version>3.4.10</version>-->
-<!--    </dependency>-->
-
     <!--2.6以后需要使用curator，2.6以前使用zkclient-->
     <dependency>
       <groupId>org.apache.curator</groupId>
       <artifactId>curator-framework</artifactId>
       <version>${curator.version}</version>
+    </dependency>
+
+    <!-- 使用 fastjson 作为 redis 序列化工具 -->
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>fastjson</artifactId>
+      <version>1.2.6</version>
     </dependency>
   </dependencies>
 

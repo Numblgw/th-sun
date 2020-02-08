@@ -1,11 +1,13 @@
 package com.tianhuo.thkernel.domain.article.impl;
 
+import com.tianhuo.thcommon.utils.StringUtil;
+import com.tianhuo.thkernel.domain.article.Article;
 import com.tianhuo.thkernel.domain.article.ArticleService;
 import com.tianhuo.thkernel.domain.article.repository.ArticleRepository;
-import com.tianhuo.thcommon.domain.Article;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,11 +34,11 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   @Override
-  public Article queryById(Long id) {
-    if(null == id || 0 == id) {
+  public Article queryById(String id) {
+    if(StringUtils.isEmpty(id)) {
       return null;
     }
-    return articleRepository.queryById(id);
+    return articleRepository.queryById(StringUtil.convertToLong(id, 0L));
   }
 
   @Override
@@ -47,7 +49,7 @@ public class ArticleServiceImpl implements ArticleService {
     if(null == limit || limit > BATCH_MAX_SIZE) {
       limit = BATCH_MAX_SIZE;
     }
-    return articleRepository.queryByBatch(start, limit);
+    return articleRepository.queryExcerptByBatch(start, limit);
   }
 
   @Override
@@ -88,5 +90,10 @@ public class ArticleServiceImpl implements ArticleService {
       return null;
     }
     return articleRepository.getLastPublishingDate(userId);
+  }
+
+  @Override
+  public List<Article> queryByCategoryId(String categoryId, Long start, Integer limit) {
+    return articleRepository.queryByCategoryId(categoryId, start, limit);
   }
 }

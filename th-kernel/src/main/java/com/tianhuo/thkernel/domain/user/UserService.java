@@ -1,5 +1,8 @@
 package com.tianhuo.thkernel.domain.user;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
  * 用户领域模型
  * @author liguowei
@@ -12,7 +15,7 @@ public interface UserService {
    * @param user user to add
    * @return if success return Boolean.TRUE else return Boolean.FALSE
    */
-  Boolean add(User user);
+  Long add(User user);
 
   /**
    * update one user info
@@ -39,4 +42,11 @@ public interface UserService {
    * @param id user id
    */
   void delete(String id);
+
+  /**
+   * query user by user ids
+   * @param ids collection of user id
+   * @return list of user domain object
+   */
+  List<User> queryUsers(Collection<String> ids);
 }

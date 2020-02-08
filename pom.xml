@@ -19,6 +19,15 @@
     <module>th-sunshine</module>
     <module>th-kernel</module>
   </modules>
+
+  <!--deploy到本地仓库-->
+  <distributionManagement>
+    <repository>
+      <id>localRepository</id>
+      <url>file:/Users/liguowei/.m2/repository</url>
+    </repository>
+  </distributionManagement>
+
   <!--设置编译使用的字符集-->
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

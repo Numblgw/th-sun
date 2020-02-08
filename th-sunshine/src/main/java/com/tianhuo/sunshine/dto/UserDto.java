@@ -1,8 +1,11 @@
 package com.tianhuo.sunshine.dto;
 
+import com.tianhuo.sunshine.enums.UserOperateResult;
+
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -12,7 +15,11 @@ import java.time.LocalDateTime;
  */
 @Data
 @Builder
-public class UserDto {
+public class UserDto implements Serializable {
+
+  private static final long serialVersionUID = -5604108995178646863L;
+
+  private UserOperateResult userOperateResult;
 
   private String id;
 

@@ -1,5 +1,6 @@
 package com.tianhuo.thkernel.application.cmd;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -7,6 +8,7 @@ import lombok.Data;
  * @date 2019-12-11 18:10:58
  */
 @Data
+@Builder
 public class UserUpdateCmd {
 
   private String id;

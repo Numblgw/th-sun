@@ -5,8 +5,11 @@ import com.tianhuo.thkernel.port.persistence.entity.UserDO;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
 
 
 /**
@@ -45,7 +48,8 @@ public interface UserMapper {
    */
   @Insert("insert into `users`(username, password, nickname, registered_time, role_id) "
       + "values(#{username}, #{password}, #{nickname}, #{registeredTime}, #{roleId})")
-  int insert(UserDO user);
+  @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
+  Long insert(UserDO user);
 
   /**
    * update user
@@ -62,4 +66,20 @@ public interface UserMapper {
    */
   @Delete("update `users` set if_delete = 1 where id = #{id}")
   void delete(Long id);
+
+  /**
+   * query users by ids
+   * @param ids list of user id
+   * @return list of user data object
+   */
+  @Select("<script>"
+      + "select id, username, password, nickname, registered_time, role_id "
+      + "from `users` "
+      + "where id in "
+      + "<foreach item='item' collection='list' open='(' separator=', ' close=')'> "
+      + "#{item} "
+      + "</foreach> "
+      + "and if_delete = 0 "
+      + "</script> ")
+  List<UserDO> queryUserByIds(List<Integer> ids);
 }

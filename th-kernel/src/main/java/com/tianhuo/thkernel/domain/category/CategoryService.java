@@ -32,4 +32,11 @@ public interface CategoryService {
    * @param id category id
    */
   void delete(Integer id);
+
+  /**
+   * find category by id
+   * @param id category id
+   * @return category domain object
+   */
+  Category findById(String id);
 }

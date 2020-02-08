@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
  * user service
  * @see com.tianhuo.thkernel.domain.user.UserService
@@ -21,11 +24,11 @@ public class UserServiceImpl implements UserService {
   private UserRepository userRepository;
 
   @Override
-  public Boolean add(User user) {
+  public Long add(User user) {
     if(null == user) {
-      return Boolean.FALSE;
+      return null;
     }
-    return 1 == userRepository.add(user);
+    return userRepository.add(user);
   }
 
   @Override
@@ -49,5 +52,10 @@ public class UserServiceImpl implements UserService {
   @Override
   public void delete(String id) {
     userRepository.delete(id);
+  }
+
+  @Override
+  public List<User> queryUsers(Collection<String> ids) {
+    return userRepository.queryUsers(ids);
   }
 }

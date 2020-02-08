@@ -4,6 +4,7 @@ import com.tianhuo.thkernel.port.persistence.entity.ArticleExcerptDO;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -42,7 +43,7 @@ public interface ArticleExcerptMapper {
   @Select(
       "select id, sender_id, title, category_id, tags, excerpt, create_at, modify_at "
       + "from article_excerpt "
-      + "where id > #{start} limit #{limit}"
+      + "limit #{start}, #{limit} "
   )
   List<ArticleExcerptDO> queryByBatch(Long start, Integer limit);
 
@@ -73,13 +74,15 @@ public interface ArticleExcerptMapper {
   /**
    * insert
    * @param articleExcerptDO data object
+   * @return article id
    */
   @Insert(
       "insert into "
       + "article_excerpt(sender_id, title, category_id, tags, excerpt, create_at, modify_at) "
-      + "values(#{senderId}, #{title}, #{categoryId}, #{categoryName}, #{tags}, #{excerpt}, #{createAt}, #{modifyAt})"
+      + "values(#{senderId}, #{title}, #{categoryId}, #{tags}, #{excerpt}, #{createAt}, #{modifyAt})"
   )
-  void insert(ArticleExcerptDO articleExcerptDO);
+  @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
+  Long insert(ArticleExcerptDO articleExcerptDO);
 
   /**
    * count article by user id
@@ -96,4 +99,16 @@ public interface ArticleExcerptMapper {
    */
   @Select("select max(create_at) from article_excerpt where sender_id = #{userId}")
   LocalDateTime getLastPublishingDate(Long userId);
+
+  /**
+   * query by category id
+   * @param categoryId category id
+   * @return list of article excerpt data object
+   */
+  @Select(
+      "select id, sender_id, title, category_id, tags, excerpt, create_at, modify_at "
+          + "from article_excerpt "
+          + "where category_id = #{categoryId} limit #{start}, #{limit}"
+  )
+  List<ArticleExcerptDO> queryByCategoryId(Integer categoryId, Long start, Integer limit);
 }

@@ -68,7 +68,6 @@ public class Role {
    * check this entity complete
    */
   private void check() {
-    CheckUtil.notNull(id, "role id is null");
     CheckUtil.notNull(name, "role name is null");
   }
 }

@@ -1,20 +1,21 @@
 package com.tianhuo.thkernel.domain.article.repository;
 
 import com.tianhuo.sunshine.exception.ArticleDetailNotFoundException;
+import com.tianhuo.thcommon.utils.StringUtil;
 import com.tianhuo.thkernel.domain.article.Article;
 import com.tianhuo.thkernel.port.persistence.dao.mongo.ArticleDetailDao;
 import com.tianhuo.thkernel.port.persistence.dao.mysql.ArticleExcerptMapper;
+import com.tianhuo.thkernel.port.persistence.entity.ArticleCacheDO;
 import com.tianhuo.thkernel.port.persistence.entity.ArticleDetailDO;
 import com.tianhuo.thkernel.port.persistence.entity.ArticleExcerptDO;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
+
+import javax.annotation.Resource;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -27,14 +28,14 @@ import java.util.stream.Collectors;
 @Repository
 public class ArticleRepository {
 
-  @Autowired
+  @Resource
   private ArticleDetailDao articleDetailDao;
 
-  @Autowired
+  @Resource
   private ArticleExcerptMapper articleExcerptMapper;
 
-  @Autowired
-  private RedisTemplate<String, Article> articleRedisTemplate;
+  @Resource
+  private RedisTemplate<String, ArticleCacheDO> articleRedisTemplate;
 
   /**
    * query article by id
@@ -43,9 +44,9 @@ public class ArticleRepository {
    */
   public Article queryById(Long id) {
     // 先取缓存
-    Article article = articleRedisTemplate.opsForValue().get(singleCacheKey(id));
-    if(null != article) {
-      return article;
+    ArticleCacheDO articleCache = articleRedisTemplate.opsForValue().get(singleCacheKey(String.valueOf(id)));
+    if(null != articleCache) {
+      return ArticleConverter.convertToArticleByCache(articleCache);
     }
 
     ArticleExcerptDO articleExcerpt = articleExcerptMapper.queryById(id);
@@ -56,9 +57,10 @@ public class ArticleRepository {
     if(null == articleDetail) {
       throw new ArticleDetailNotFoundException(String.valueOf(id));
     }
-    article = ArticleConverter.assemble(articleExcerpt, articleDetail);
+    Article article = ArticleConverter.assemble(articleExcerpt, articleDetail);
     articleRedisTemplate.opsForValue()
-        .set(singleCacheKey(id), article, timeout(), TimeUnit.MILLISECONDS);
+        .set(singleCacheKey(String.valueOf(id)), ArticleConverter.toArticleCache(article),
+            timeout(), TimeUnit.MILLISECONDS);
     return article;
   }
 
@@ -68,33 +70,10 @@ public class ArticleRepository {
    * @param limit batch size
    * @return article list
    */
-  public List<Article> queryByBatch(Long start, Integer limit) {
-    List<Article> result = new ArrayList<>(limit);
-    List<Long> needQueryIds = new ArrayList<>(limit);
-    // 先查缓存
-    for(long i = start ; i <= start + limit ; i++) {
-      Article tmp = articleRedisTemplate.opsForValue().get(singleCacheKey(i));
-      if(null == tmp) {
-        needQueryIds.add(i);
-      }else {
-        result.add(tmp);
-      }
-    }
-    if(CollectionUtils.isEmpty(needQueryIds)) {
-      return result;
-    }
-    // 查库
-    result.addAll(
-        articleExcerptMapper.queryByIds(needQueryIds).stream()
-            .map(ArticleConverter::convertToArticleBy)
-            .collect(Collectors.toList())
-    );
-    // 将结果缓存
-    for (Article article : result) {
-      articleRedisTemplate.opsForValue()
-          .set(batchCacheKey(Long.valueOf(article.getId())), article, timeout(), TimeUnit.MILLISECONDS);
-    }
-    return result;
+  public List<Article> queryExcerptByBatch(Long start, Integer limit) {
+    return articleExcerptMapper.queryByBatch(start, limit).stream()
+        .map(ArticleConverter::convertToArticleBy)
+        .collect(Collectors.toList());
   }
 
   /**
@@ -103,16 +82,23 @@ public class ArticleRepository {
    */
   @Transactional(rollbackFor = RuntimeException.class)
   public void save(Article article) {
-    articleExcerptMapper.insert(ArticleConverter.convertToArticleExcerpt(article));
+    ArticleExcerptDO articleExcerptDO = ArticleConverter.convertToArticleExcerpt(article);
+    articleExcerptMapper.insert(articleExcerptDO);
+    article.insertId(String.valueOf(articleExcerptDO.getId()));
     articleDetailDao.insert(ArticleConverter.convertToArticleDetail(article));
+    // 考虑到用户发布之后会马上去查看，所以发布之后存到缓存里
+    articleRedisTemplate.opsForValue()
+        .set(singleCacheKey(article.getId()), ArticleConverter.toArticleCache(article),
+            tempTimeout(), TimeUnit.MILLISECONDS);
   }
 
   /**
    * modify article
    * @param article modified article
    */
+  @Transactional(rollbackFor = RuntimeException.class)
   public void modify(Article article) {
-    articleRedisTemplate.delete(singleCacheKey(Long.valueOf(article.getId())));
+    articleRedisTemplate.delete(singleCacheKey(article.getId()));
     articleExcerptMapper.update(ArticleConverter.convertToArticleExcerpt(article));
     articleDetailDao.update(ArticleConverter.convertToArticleDetail(article));
   }
@@ -121,18 +107,42 @@ public class ArticleRepository {
    * delete article
    * @param id article id
    */
+  @Transactional(rollbackFor = RuntimeException.class)
   public void delete(Long id) {
-    articleRedisTemplate.delete(singleCacheKey(id));
+    articleRedisTemplate.delete(singleCacheKey(String.valueOf(id)));
     articleExcerptMapper.delete(id);
     articleDetailDao.delete(String.valueOf(id));
   }
 
+  /**
+   * count article by user id
+   * @param userId user id
+   * @return article count
+   */
   public Integer countByUser(Long userId) {
     return articleExcerptMapper.countByUser(userId);
   }
 
+  /**
+   * get last publishing date
+   * @param userId user id
+   * @return last publishing date
+   */
   public LocalDateTime getLastPublishingDate(Long userId) {
     return articleExcerptMapper.getLastPublishingDate(userId);
+  }
+
+  /**
+   * query article by category id
+   * @param categoryId category id
+   * @return list of article
+   */
+  public List<Article> queryByCategoryId(String categoryId, Long start, Integer limit) {
+    List<ArticleExcerptDO> articles = articleExcerptMapper.queryByCategoryId(
+            StringUtil.convertToLong(categoryId, 0L).intValue(), start, limit);
+    return articles.stream()
+        .map(ArticleConverter::convertToArticleBy)
+        .collect(Collectors.toList());
   }
 
   /**
@@ -140,20 +150,11 @@ public class ArticleRepository {
    * @param id id
    * @return key in cache
    */
-  private String singleCacheKey(Long id) {
+  private String singleCacheKey(String id) {
     if(null == id) {
       throw new NullPointerException("id is null");
     }
     return id + "tianhuo_article";
-  }
-
-  /**
-   * 生成批量缓存的 key
-   * @param id id
-   * @return key
-   */
-  private String batchCacheKey(Long id) {
-    return id + "tianhuo_article_excerpt";
   }
 
   /**
@@ -163,5 +164,13 @@ public class ArticleRepository {
   private Long timeout() {
     long sixHour = 1000 * 60 * 60 * 6;
     return sixHour + (long) (Math.random() * sixHour);
+  }
+
+  /**
+   * get temp cache time out
+   * @return time out
+   */
+  private Long tempTimeout() {
+    return (long) 1000 * 5;
   }
 }

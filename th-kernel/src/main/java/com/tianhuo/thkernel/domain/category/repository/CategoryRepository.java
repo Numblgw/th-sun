@@ -52,4 +52,13 @@ public class CategoryRepository {
   public void delete(Integer id) {
     categoryMapper.delete(id);
   }
+
+  /**
+   * query by id
+   * @param id category id
+   * @return category domain object
+   */
+  public Category queryById(Integer id) {
+    return CategoryConverter.convert(categoryMapper.queryById(id));
+  }
 }

@@ -2,6 +2,7 @@ package com.tianhuo.thkernel.domain.article.repository;
 
 import com.google.common.collect.Lists;
 import com.tianhuo.thkernel.domain.article.Article;
+import com.tianhuo.thkernel.port.persistence.entity.ArticleCacheDO;
 import com.tianhuo.thkernel.port.persistence.entity.ArticleDetailDO;
 import com.tianhuo.thkernel.port.persistence.entity.ArticleExcerptDO;
 import com.tianhuo.thcommon.utils.StringUtil;
@@ -81,5 +82,41 @@ class ArticleConverter {
         articleExcerpt.getCreateAt(),
         articleExcerpt.getModifyAt()
     );
+  }
+
+  /**
+   * article cache do -> article domain object
+   * @param articleCache article cache do
+   * @return article domain object
+   */
+  static Article convertToArticleByCache(ArticleCacheDO articleCache) {
+    return new Article(
+        articleCache.getId(),
+        articleCache.getSenderId(),
+        articleCache.getTitle(),
+        articleCache.getCategoryId(),
+        articleCache.getTags(),
+        articleCache.getDetail(),
+        articleCache.getCreateAt(),
+        articleCache.getModifyAt()
+    );
+  }
+
+  /**
+   * article domain object -> article cache do
+   * @param article article domian object
+   * @return article cache do
+   */
+  static ArticleCacheDO toArticleCache(Article article) {
+    return ArticleCacheDO.builder()
+        .id(article.getId())
+        .senderId(article.getSenderId())
+        .title(article.getTitle())
+        .categoryId(article.getCategoryId())
+        .tags(article.getTags())
+        .detail(article.getDetail())
+        .createAt(article.getCreateAt())
+        .modifyAt(article.getModifyAt())
+        .build();
   }
 }

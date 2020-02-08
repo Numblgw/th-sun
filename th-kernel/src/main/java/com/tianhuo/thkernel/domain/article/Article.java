@@ -26,7 +26,7 @@ import java.util.Objects;
 @Getter
 @ToString
 @EqualsAndHashCode
-public class Article {
+public class Article{
 
   /**
    * article excerpt length
@@ -112,6 +112,17 @@ public class Article {
   }
 
   /**
+   * 用于发布文章之后插入数据库文章id
+   * 仅限于 id 为空时才会改变
+   * @param id id
+   */
+  public void insertId(String id) {
+    if(StringUtils.isEmpty(this.id)) {
+      this.id = id;
+    }
+  }
+
+  /**
    * get tags string split by
    * @return tag string
    */
@@ -169,7 +180,6 @@ public class Article {
    * check this object
    */
   private void check() {
-    CheckUtil.notNull(this.id, "article id is null");
     CheckUtil.notNull(this.senderId, "article sender id is null");
     CheckUtil.notNull(this.title, "article title is null");
     CheckUtil.notNull(this.categoryId, "article category id is null");

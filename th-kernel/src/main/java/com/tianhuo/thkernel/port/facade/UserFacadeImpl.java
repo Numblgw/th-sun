@@ -3,17 +3,21 @@ package com.tianhuo.thkernel.port.facade;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.tianhuo.sunshine.dto.UserDto;
 import com.tianhuo.sunshine.service.UserFacade;
-import com.tianhuo.thcommon.domain.User;
 import com.tianhuo.thcommon.dto.HttpResultWrapper;
 import com.tianhuo.thcommon.enums.HttpResultStatus;
-import com.tianhuo.thcommon.utils.StringUtil;
-import com.tianhuo.thkernel.domain.article.ArticleService;
-import com.tianhuo.thkernel.domain.user.UserService;
+import com.tianhuo.thkernel.application.UserApplicationService;
+import com.tianhuo.thkernel.application.cmd.UserUpdateCmd;
+import com.tianhuo.thkernel.domain.user.User;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
+import javax.annotation.Resource;
+
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 /**
  * user rpc service impl
@@ -22,63 +26,66 @@ import java.util.List;
  * @date 2019-12-07 22:40:33
  */
 @Service
+@Component
 public class UserFacadeImpl implements UserFacade {
 
-  @Autowired
-  private UserService userService;
-
-  @Autowired
-  private ArticleService articleService;
+  @Resource
+  private UserApplicationService userApplicationService;
 
   @Override
-  public HttpResultWrapper<UserDto> queryById(String id) {
-    User user = userService.getById(id);
-    if(null == user) {
+  public HttpResultWrapper<UserDto> register(UserDto userDto) {
+    if(null == userDto) {
+      return new HttpResultWrapper<UserDto>()
+          .fail(HttpResultStatus.INVALID_PARAM);
+    }
+    Long userId = userApplicationService.register(convert(userDto));
+    if(null == userId || userId == 0L) {
+      return new HttpResultWrapper<UserDto>().fail(HttpResultStatus.FAIL);
+    }
+    userDto.setId(String.valueOf(userId));
+    return new HttpResultWrapper<UserDto>().success(userDto);
+  }
+
+  @Override
+  public HttpResultWrapper<UserDto> login(UserDto userDto) {
+    if(StringUtils.isEmpty(userDto.getUsername())
+        || StringUtils.isEmpty(userDto.getPassword())) {
       return new HttpResultWrapper<UserDto>().fail(HttpResultStatus.INVALID_PARAM);
     }
-    Integer articleCount = articleService.countByUserId(StringUtil.convertToLong(id, 0L));
-    LocalDateTime localDateTime = articleService.getLastPublishingDateByUser(StringUtil.convertToLong(id, 0L));
-    return new HttpResultWrapper<UserDto>().success(assemble(user, articleCount, localDateTime));
+    userDto.setUserOperateResult(
+        userApplicationService.login(userDto.getUsername(), userDto.getPassword())
+    );
+    return new HttpResultWrapper<UserDto>().success(userDto);
   }
 
   @Override
-  public HttpResultWrapper<UserDto> queryByUsername(String username) {
-    User user = userService.getByUsername(username);
-    if(null == user) {
+  public HttpResultWrapper<UserDto> update(UserDto userDto) {
+    if(null == userDto || StringUtils.isEmpty(userDto.getId())) {
       return new HttpResultWrapper<UserDto>().fail(HttpResultStatus.INVALID_PARAM);
     }
-    Integer articleCount = articleService.countByUserId(StringUtil.convertToLong(user.getId(), 0L));
-    LocalDateTime localDateTime = articleService.getLastPublishingDateByUser(StringUtil.convertToLong(user.getId(), 0L));
-    return new HttpResultWrapper<UserDto>().success(assemble(user, articleCount, localDateTime));
-  }
-
-  @Override
-  public HttpResultWrapper<List<UserDto>> queryAdminList() {
-    return null;
-  }
-
-  @Override
-  public HttpResultWrapper addUser(UserDto userDto) {
-    if(userDto == null) {
-      return new HttpResultWrapper().fail(HttpResultStatus.INVALID_PARAM);
-    }
-    userService.add(convert(userDto));
-    return new HttpResultWrapper().success();
-  }
-
-  private UserDto assemble(User user, Integer articleCount, LocalDateTime lastPublishingDate) {
-    return UserDto.builder()
-        .id(user.getId())
-        .username(user.getUsername())
-        .password(user.getPassword())
-        .nickname(user.getNickname())
-        .registeredTime(user.getRegisteredTime())
-        .roleId(user.getRoleId())
-        .articleCount(articleCount)
-        .lastPublishDate(lastPublishingDate)
+    UserUpdateCmd cmd = UserUpdateCmd.builder()
+        .id(userDto.getId())
+        .nickname(userDto.getNickname())
+        .password(userDto.getPassword())
+        .roleId(userDto.getRoleId())
         .build();
+    userDto.setUserOperateResult(userApplicationService.updateUserInfo(cmd));
+    return new HttpResultWrapper<UserDto>().success(userDto);
   }
 
+  @Override
+  public HttpResultWrapper<List<UserDto>> queryUsers(Collection<String> ids) {
+    List<UserDto> res = userApplicationService.queryUsers(ids).stream()
+        .map(this::convert)
+        .collect(Collectors.toList());
+    return new HttpResultWrapper<List<UserDto>>().success(res);
+  }
+
+  /**
+   * convert UserDto --> User
+   * @param userDto user dto
+   * @return user domain object
+   */
   private User convert(UserDto userDto) {
     if(userDto == null) {
       return null;
@@ -91,5 +98,23 @@ public class UserFacadeImpl implements UserFacade {
         userDto.getRegisteredTime(),
         userDto.getRoleId()
     );
+  }
+
+  /**
+   * user domain object convert to user data transfer object
+   * @param user user domain object
+   * @return user data transfer object
+   */
+  private UserDto convert(User user) {
+    if(user == null) {
+      return null;
+    }
+    return UserDto.builder()
+        .id(user.getId())
+        .username(user.getUsername())
+        .nickname(user.getNickname())
+        .registeredTime(user.getRegisteredTime())
+        .roleId(user.getRoleId())
+        .build();
   }
 }

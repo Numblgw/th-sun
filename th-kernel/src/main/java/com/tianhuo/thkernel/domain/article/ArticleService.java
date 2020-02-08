@@ -16,7 +16,7 @@ public interface ArticleService {
    * @param id article id
    * @return article
    */
-  Article queryById(Long id);
+  Article queryById(String id);
 
   /**
    * query article by batch
@@ -57,4 +57,13 @@ public interface ArticleService {
    * @return last publishing date
    */
   LocalDateTime getLastPublishingDateByUser(Long userId);
+
+  /**
+   * query article by category id
+   * @param categoryId category id
+   * @param start start
+   * @param limit limit
+   * @return list of article
+   */
+  List<Article> queryByCategoryId(String categoryId, Long start, Integer limit);
 }

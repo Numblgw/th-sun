@@ -1,17 +1,22 @@
 package com.tianhuo.thkernel.domain.user.repository;
 
-import com.tianhuo.sunshine.dto.UserDto;
 import com.tianhuo.thkernel.domain.user.User;
 import com.tianhuo.thkernel.port.persistence.dao.mysql.UserMapper;
 import com.tianhuo.thcommon.utils.StringUtil;
+import com.tianhuo.thkernel.port.persistence.entity.UserCacheDO;
 import com.tianhuo.thkernel.port.persistence.entity.UserDO;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * user repository
@@ -21,21 +26,24 @@ import java.util.concurrent.TimeUnit;
 @Repository
 public class UserRepository {
 
-  @Autowired
+  @Resource
   private UserMapper userMapper;
 
-  @Autowired
-  private RedisTemplate<String, User> userRedisTemplate;
+  @Resource
+  private RedisTemplate<String, UserCacheDO> userRedisTemplate;
 
   private static final long ONE_HOUR = 1000 * 60 * 60;
 
   /**
    * add one user
    * @param user user to save
-   * @return if success return 1 else return 0
+   * @return if success return user id
    */
-  public int add(User user) {
-    return userMapper.insert(UserConverter.convert(user));
+  public Long add(User user) {
+    userMapper.insert(UserConverter.toUserDO(user));
+    userRedisTemplate.opsForValue()
+        .set(cacheIdKey(user.getId()), UserConverter.toUserCache(user), timeout(), TimeUnit.MILLISECONDS);
+    return StringUtil.convertToLong(user.getId(), 0L);
   }
 
   /**
@@ -44,15 +52,15 @@ public class UserRepository {
    * @return user domain object
    */
   public User queryById(String id) {
-    User user = userRedisTemplate.opsForValue().get(cacheIdKey(id));
-    if(null != user && Objects.equals(id, user.getId())) {
-      return user;
+    UserCacheDO userCache = userRedisTemplate.opsForValue().get(cacheIdKey(id));
+    if(null != userCache && Objects.equals(id, userCache.getId())) {
+      return UserConverter.convert(userCache);
     }
-    user = UserConverter.convert(
+    User user = UserConverter.convert(
         userMapper.findById(StringUtil.convertToLong(id, 0))
     );
     if(null != user) {
-      userRedisTemplate.opsForValue().set(cacheIdKey(id), user, timeout(), TimeUnit.MILLISECONDS);
+      userRedisTemplate.opsForValue().set(cacheIdKey(id), UserConverter.toUserCache(user), timeout(), TimeUnit.MILLISECONDS);
     }
     return user;
   }
@@ -63,13 +71,10 @@ public class UserRepository {
    * @return user domain object
    */
   public User queryByUsername(String username) {
-    User user = userRedisTemplate.opsForValue().get(cacheUsernameKey(username));
-    if(null != user && Objects.equals(user.getUsername(), username)) {
-      return user;
-    }
-    user = UserConverter.convert(userMapper.findByUsername(username));
+    User user = UserConverter.convert(userMapper.findByUsername(username));
     if(user != null) {
-      userRedisTemplate.opsForValue().set(cacheUsernameKey(username), user, timeout(), TimeUnit.MILLISECONDS);
+      userRedisTemplate.opsForValue().set(cacheIdKey(user.getId()), UserConverter.toUserCache(user),
+          timeout(), TimeUnit.MILLISECONDS);
     }
     return user;
   }
@@ -79,9 +84,8 @@ public class UserRepository {
    * @param user user domain object to update
    */
   public void update(User user) {
-    userMapper.update(UserConverter.convert(user));
+    userMapper.update(UserConverter.toUserDO(user));
     userRedisTemplate.delete(cacheIdKey(user.getId()));
-    userRedisTemplate.delete(cacheUsernameKey(user.getUsername()));
   }
 
   /**
@@ -89,13 +93,45 @@ public class UserRepository {
    * @param id user id
    */
   public void delete(String id) {
-    userRedisTemplate.delete(cacheIdKey(id));
     UserDO user = userMapper.findById(StringUtil.convertToLong(id, 0L));
     if(null == user) {
       return;
     }
-    userRedisTemplate.delete(cacheUsernameKey(user.getUsername()));
+    userRedisTemplate.delete(cacheIdKey(id));
     userMapper.delete(StringUtil.convertToLong(id, 0));
+  }
+
+  /**
+   * query users by ids
+   * @param ids collection of user id
+   * @return list of user
+   */
+  public List<User> queryUsers(Collection<String> ids) {
+    List<User> res = new ArrayList<>(ids.size());
+    List<String> idList = new ArrayList<>(ids).stream()
+        .distinct()
+        .collect(Collectors.toList());
+    List<User> hitCache = idList.stream()
+        .map(id -> UserConverter.convert(userRedisTemplate.opsForValue().get(cacheIdKey(id))))
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+    res.addAll(hitCache);
+    if(Objects.equals(hitCache.size(), idList.size())) {
+      return res;
+    }
+    // 删掉已经命中缓存的 id
+    hitCache.stream().map(User::getId).forEach(idList::remove);
+    List<Integer> param = new ArrayList<>(idList).stream()
+        .map(Integer::new)
+        .collect(Collectors.toList());
+    List<User> unCache = UserConverter.convert(userMapper.queryUserByIds(param));
+    // 将为缓存的加入缓存
+    for (User user : unCache) {
+      userRedisTemplate.opsForValue()
+          .set(cacheIdKey(user.getId()), UserConverter.toUserCache(user), timeout(), TimeUnit.MILLISECONDS);
+    }
+    res.addAll(unCache);
+    return res;
   }
 
   /**
@@ -105,15 +141,6 @@ public class UserRepository {
    */
   private String cacheIdKey(String id) {
     return id + "_id_th_u";
-  }
-
-  /**
-   * get the string key in redis cache by username
-   * @param username username
-   * @return key
-   */
-  private String cacheUsernameKey(String username) {
-    return username + "_username_th_u";
   }
 
   private Long timeout() {

@@ -48,4 +48,12 @@ public interface CategoryMapper {
   @Insert("insert into `category`(name) "
       + "values(#{name})")
   void insert(CategoryDO category);
+
+  /**
+   * query by id
+   * @param id category id
+   * @return category data object
+   */
+  @Select("select id, name from `category` where id = #{id} ")
+  CategoryDO queryById(Integer id);
 }

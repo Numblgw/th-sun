@@ -6,6 +6,7 @@ import com.tianhuo.thkernel.application.cmd.UserUpdateCmd;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import org.springframework.util.StringUtils;
@@ -72,7 +73,6 @@ public class User {
    * check this entity complete
    */
   private void check() {
-    CheckUtil.notNull(this.id, "user id is null");
     CheckUtil.notNull(this.username, "username is null");
     CheckUtil.notNull(this.registeredTime, "user registered time is null");
     CheckUtil.notNull(this.roleId, "user role id is null");

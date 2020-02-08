@@ -23,6 +23,11 @@ spring:
       host: 47.102.195.50
       port: 27017
       database: tianhuo
+  redis:
+    host: 47.102.195.50
+    port: 6379
+
+
 
 mybatis:
   type-aliases-package: com.tianhuo.thkernel.port.persistence.entity
@@ -39,7 +44,7 @@ dubbo:
     protocol: zookeeper
     address: 47.102.195.50
     port: 2181
-  consumer:
-    timeout: 3000
+  provider:
+    timeout: 5000
   scan:
     base-packages: com.tianhuo.thkernel.port.facade
