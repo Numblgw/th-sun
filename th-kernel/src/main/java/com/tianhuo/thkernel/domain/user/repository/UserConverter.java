@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * @author liguowei
  * @date 2019-12-03 16:54:01
  */
-class UserConverter {
+public class UserConverter {
 
   /**
    * UserDO to User
@@ -64,7 +64,7 @@ class UserConverter {
    * @param userCache user cache do
    * @return user domain object
    */
-  static User convert(UserCacheDO userCache) {
+  public static User convert(UserCacheDO userCache) {
     if(null == userCache) {
       return null;
     }
@@ -83,7 +83,7 @@ class UserConverter {
    * @param user user domain object
    * @return user cache do
    */
-  static UserCacheDO toUserCache(User user) {
+  public static UserCacheDO toUserCache(User user) {
     return UserCacheDO.builder()
         .id(user.getId())
         .username(user.getUsername())

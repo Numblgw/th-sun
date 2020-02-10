@@ -10,12 +10,15 @@ import com.tianhuo.thkernel.domain.article.Article;
 import com.tianhuo.thkernel.domain.article.ArticleService;
 import com.tianhuo.thkernel.domain.category.Category;
 import com.tianhuo.thkernel.domain.category.CategoryService;
+import com.tianhuo.thkernel.domain.session.SessionId;
+import com.tianhuo.thkernel.domain.session.SessionService;
 import com.tianhuo.thkernel.domain.user.User;
 import com.tianhuo.thkernel.domain.user.UserService;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import javax.annotation.Resource;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,14 +35,17 @@ import java.util.stream.Collectors;
 public class UserApplicationService {
 
 
-  @Autowired
+  @Resource
   private UserService userService;
 
-  @Autowired
+  @Resource
   private ArticleService articleService;
 
-  @Autowired
+  @Resource
   private CategoryService categoryService;
+
+  @Resource
+  private SessionService sessionService;
 
   /**
    * user register
@@ -60,26 +66,26 @@ public class UserApplicationService {
    * login
    * @param username username
    * @param password password
-   * @return login result
+   * @return session id domain object
    */
-  public UserOperateResult login(String username, String password) {
+  public SessionId login(String username, String password) {
     if(StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
-      return UserOperateResult.INVALID_PARAM;
+      return null;
     }
     User user = userService.getByUsername(username);
     if(user == null) {
-      return UserOperateResult.USER_NOT_FOUND;
+      return null;
     }
     if(!Objects.equals(password, user.getPassword())) {
-      return UserOperateResult.PASSWORD_ERROR;
+      return SessionId.empty();
     }
-    return UserOperateResult.SUCCESS;
+    return sessionService.createSession(user);
   }
 
   /**
    * find user by user id
-   * @param id
-   * @return
+   * @param id user id
+   * @return user domain object
    */
   public User findUserById(String id) {
     if(StringUtils.isEmpty(id)) {
@@ -94,8 +100,8 @@ public class UserApplicationService {
 
   /**
    * update user
-   * @param cmd
-   * @return
+   * @param cmd update user command
+   * @return .
    */
   public UserOperateResult updateUserInfo(UserUpdateCmd cmd) {
     if(null == cmd || StringUtils.isEmpty(cmd.getId())) {

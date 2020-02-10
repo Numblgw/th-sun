@@ -2,6 +2,7 @@ package com.tianhuo.thkernel.Infrastructure.config;
 
 import com.alibaba.dubbo.common.serialize.fastjson.FastJsonSerialization;
 import com.tianhuo.thkernel.domain.article.Article;
+import com.tianhuo.thkernel.domain.session.SessionCacheDO;
 import com.tianhuo.thkernel.domain.user.User;
 import com.tianhuo.thkernel.port.persistence.entity.ArticleCacheDO;
 import com.tianhuo.thkernel.port.persistence.entity.UserCacheDO;
@@ -37,6 +38,15 @@ public class RedisConfig {
     redisTemplate.setConnectionFactory(redisConnectionFactory);
     redisTemplate.setKeySerializer(new StringRedisSerializer());
     redisTemplate.setValueSerializer(new FastJson2JsonRedisSerializer(UserCacheDO.class));
+    return redisTemplate;
+  }
+
+  @Bean
+  RedisTemplate<String, SessionCacheDO> sessionTemplate(RedisConnectionFactory redisConnectionFactory) {
+    RedisTemplate<String, SessionCacheDO> redisTemplate = new RedisTemplate<>();
+    redisTemplate.setConnectionFactory(redisConnectionFactory);
+    redisTemplate.setKeySerializer(new StringRedisSerializer());
+    redisTemplate.setValueSerializer(new FastJson2JsonRedisSerializer(SessionCacheDO.class));
     return redisTemplate;
   }
 }

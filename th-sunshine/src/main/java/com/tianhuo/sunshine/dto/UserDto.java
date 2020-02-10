@@ -21,6 +21,10 @@ public class UserDto implements Serializable {
 
   private UserOperateResult userOperateResult;
 
+  private String sessionId;
+
+  private Long sessionLifeTime;
+
   private String id;
 
   private String username;

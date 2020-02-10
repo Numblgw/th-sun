@@ -31,7 +31,7 @@
   <!--设置编译使用的字符集-->
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <th-common.version>2019120402</th-common.version>
+    <th-common.version>20200208.2116</th-common.version>
   </properties>
 
   <dependencies>

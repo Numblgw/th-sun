@@ -2,11 +2,13 @@ package com.tianhuo.thkernel.port.facade;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.tianhuo.sunshine.dto.UserDto;
+import com.tianhuo.sunshine.enums.UserOperateResult;
 import com.tianhuo.sunshine.service.UserFacade;
 import com.tianhuo.thcommon.dto.HttpResultWrapper;
 import com.tianhuo.thcommon.enums.HttpResultStatus;
 import com.tianhuo.thkernel.application.UserApplicationService;
 import com.tianhuo.thkernel.application.cmd.UserUpdateCmd;
+import com.tianhuo.thkernel.domain.session.SessionId;
 import com.tianhuo.thkernel.domain.user.User;
 
 import org.springframework.stereotype.Component;
@@ -52,10 +54,8 @@ public class UserFacadeImpl implements UserFacade {
         || StringUtils.isEmpty(userDto.getPassword())) {
       return new HttpResultWrapper<UserDto>().fail(HttpResultStatus.INVALID_PARAM);
     }
-    userDto.setUserOperateResult(
-        userApplicationService.login(userDto.getUsername(), userDto.getPassword())
-    );
-    return new HttpResultWrapper<UserDto>().success(userDto);
+    SessionId sessionId = userApplicationService.login(userDto.getUsername(), userDto.getPassword());
+    return new HttpResultWrapper<UserDto>().success(processLoginResult(sessionId));
   }
 
   @Override
@@ -116,5 +116,35 @@ public class UserFacadeImpl implements UserFacade {
         .registeredTime(user.getRegisteredTime())
         .roleId(user.getRoleId())
         .build();
+  }
+
+  /**
+   * process login result
+   * @return user data transfer object
+   */
+  private UserDto processLoginResult(SessionId sessionId) {
+    if(null == sessionId) {
+      return UserDto.builder()
+          .userOperateResult(UserOperateResult.USER_NOT_FOUND)
+          .build();
+    }
+    User user = sessionId.getUser();
+    if(!sessionId.isValid()) {
+      return UserDto.builder()
+          .userOperateResult(UserOperateResult.PASSWORD_ERROR)
+          .username(user.getUsername())
+          .build();
+    }else {
+      return UserDto.builder()
+          .userOperateResult(UserOperateResult.SUCCESS)
+          .id(user.getId())
+          .sessionId(sessionId.getSessionId())
+          .sessionLifeTime(sessionId.getLifeTime())
+          .username(user.getUsername())
+          .nickname(user.getNickname())
+          .registeredTime(user.getRegisteredTime())
+          .roleId(user.getRoleId())
+          .build();
+    }
   }
 }

@@ -1,5 +1,7 @@
 package com.tianhuo.thkernel.port.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -48,11 +50,13 @@ public class ArticleCacheDO {
   /**
    * created date
    */
+  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "GMT+8")
   private LocalDateTime createAt;
 
   /**
    * modification date
    */
+  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "GMT+8")
   private LocalDateTime modifyAt;
 
 }
