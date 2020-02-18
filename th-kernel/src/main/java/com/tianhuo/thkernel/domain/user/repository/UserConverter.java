@@ -1,5 +1,7 @@
 package com.tianhuo.thkernel.domain.user.repository;
 
+import com.alibaba.druid.util.StringUtils;
+import com.tianhuo.sunshine.dto.UserDto;
 import com.tianhuo.thkernel.domain.user.User;
 import com.tianhuo.thkernel.port.persistence.entity.UserCacheDO;
 import com.tianhuo.thkernel.port.persistence.entity.UserDO;
@@ -91,5 +93,58 @@ public class UserConverter {
         .roleId(user.getRoleId())
         .registeredTime(user.getRegisteredTime())
         .build();
+  }
+
+  /**
+   * user domain object convert to user data transfer object
+   * @param user user domain object
+   * @return user data transfer object
+   */
+  public static UserDto toUserDTO(User user) {
+    if(user == null) {
+      return null;
+    }
+    return UserDto.builder()
+        .id(user.getId())
+        .username(user.getUsername())
+        .password(user.getPassword())
+        .nickname(user.getNickname())
+        .registeredTime(user.getRegisteredTime())
+        .roleId(user.getRoleId())
+        .build();
+  }
+
+  public static UserDto toUserDTO(User user, String sessionId, Long sessionLifeTime) {
+    if(user == null || StringUtils.isEmpty(sessionId) || sessionLifeTime <= 0) {
+      return null;
+    }
+    return UserDto.builder()
+        .id(user.getId())
+        .sessionId(sessionId)
+        .sessionLifeTime(sessionLifeTime)
+        .username(user.getUsername())
+        .nickname(user.getNickname())
+        .registeredTime(user.getRegisteredTime())
+        .roleId(user.getRoleId())
+        .build();
+  }
+
+  /**
+   * convert UserDto --> User
+   * @param userDto user dto
+   * @return user domain object
+   */
+  public static User convert(UserDto userDto) {
+    if(userDto == null) {
+      return null;
+    }
+    return new User(
+        userDto.getId(),
+        userDto.getUsername(),
+        userDto.getPassword(),
+        userDto.getNickname(),
+        userDto.getRegisteredTime(),
+        userDto.getRoleId()
+    );
   }
 }

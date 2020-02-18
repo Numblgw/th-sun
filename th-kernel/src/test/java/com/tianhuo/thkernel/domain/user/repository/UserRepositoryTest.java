@@ -4,6 +4,7 @@ package com.tianhuo.thkernel.domain.user.repository;
 import com.tianhuo.thkernel.ThKernelApplication;
 import com.tianhuo.thkernel.domain.user.User;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +15,7 @@ import javax.annotation.Resource;
 
 import java.time.LocalDateTime;
 
+@Ignore
 @SpringBootTest(classes = ThKernelApplication.class)
 @RunWith(SpringRunner.class)
 public class UserRepositoryTest {

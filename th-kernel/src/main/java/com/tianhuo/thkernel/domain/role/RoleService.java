@@ -34,4 +34,11 @@ public interface RoleService {
    * @return role info
    */
   Role getById(String id);
+
+  /**
+   * delete role by role id
+   * @param id role id
+   * @return success true
+   */
+  boolean delete(String id);
 }

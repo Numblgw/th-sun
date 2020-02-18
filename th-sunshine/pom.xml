@@ -10,7 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>th-sunshine</artifactId>
-  <version>20200210.2112</version>
+  <version>${th-sunshine.version}</version>
   <build>
     <plugins>
       <plugin>

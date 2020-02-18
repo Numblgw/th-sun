@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
+
 import java.util.List;
 
 /**
@@ -18,7 +20,7 @@ import java.util.List;
 @Service
 public class RoleServiceImpl implements RoleService {
 
-  @Autowired
+  @Resource
   private RoleRepository roleRepository;
 
   @Override
@@ -48,5 +50,10 @@ public class RoleServiceImpl implements RoleService {
       return null;
     }
     return roleRepository.findById(id);
+  }
+
+  @Override
+  public boolean delete(String id) {
+    return roleRepository.delete(id);
   }
 }

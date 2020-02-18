@@ -49,11 +49,16 @@ public class SessionServiceImpl implements SessionService {
 
   @Override
   public SessionId getSession(String sessionId) {
-    SessionCacheDO sessionCache = sessionTemplate.opsForValue().get(sessionId);
+    SessionCacheDO sessionCache = sessionTemplate.opsForValue().get(getCacheKey(sessionId));
     if(null == sessionCache) {
       return SessionId.empty();
     }
     return SessionId.createSession(sessionId, UserConverter.convert(sessionCache.getUserCache()), sessionCache.getLifeTime(), sessionCache.getCreateTime());
+  }
+
+  @Override
+  public void removeSession(String sessionId) {
+    sessionTemplate.delete(getCacheKey(sessionId));
   }
 
   /**

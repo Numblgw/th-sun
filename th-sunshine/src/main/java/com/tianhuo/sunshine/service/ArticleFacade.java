@@ -48,4 +48,11 @@ public interface ArticleFacade {
    * @return list of article dto
    */
   HttpResultWrapper<List<ArticleDto>> listByCategory(String categoryId, Long start, Integer limit);
+
+  /**
+   * delete article
+   * @param id article id
+   * @return success true
+   */
+  HttpResultWrapper<Boolean> delete(Long id);
 }

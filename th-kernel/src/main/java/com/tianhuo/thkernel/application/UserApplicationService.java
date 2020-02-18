@@ -52,14 +52,15 @@ public class UserApplicationService {
    * @param user user domain object to register
    * @return user id
    */
-  public Long register(User user) {
+  public SessionId register(User user) {
     if(null == user) {
       return null;
     }
     if(null == userService.getByUsername(user.getUsername())) {
-      return userService.add(user);
+      userService.add(user);
     }
-    return null;
+    // 如果插入失败，user id 就是空的，这里会返回一个 Empty Session
+    return sessionService.createSession(user);
   }
 
   /**
@@ -96,6 +97,14 @@ public class UserApplicationService {
 
   public List<User> queryUsers(Collection<String> ids) {
     return userService.queryUsers(ids);
+  }
+
+  public List<User> userList() {
+    return userService.userList();
+  }
+
+  public void deleteUser(String id) {
+    userService.delete(id);
   }
 
   /**
@@ -154,17 +163,15 @@ public class UserApplicationService {
    * @param cmd update article command
    * @return operate result
    */
-  public UserOperateResult updateArticle(ArticleUpdateCmd cmd) {
+  public ArticleDto updateArticle(ArticleUpdateCmd cmd) {
     if(null == cmd) {
-      return UserOperateResult.INVALID_PARAM;
+      return null;
     }
     Article article = articleService.queryById(cmd.getId());
-    if(!Objects.equals(cmd.getSenderId(), article.getSenderId())) {
-      return UserOperateResult.ONLY_MODIFY_YOURS_ARTICLE;
-    }
     article.update(cmd);
     articleService.modify(article);
-    return UserOperateResult.SUCCESS;
+    Category category = categoryService.findById(article.getCategoryId());
+    return assemble(article, category);
   }
 
   /**
@@ -186,6 +193,10 @@ public class UserApplicationService {
     return result;
   }
 
+  public Long articleCount() {
+    return articleService.countArticle();
+  }
+
   /**
    * article category list
    * @return list of category dto
@@ -204,6 +215,15 @@ public class UserApplicationService {
     return articleService.queryByCategoryId(categoryId, start, limit).stream()
         .map(this::convertByArticleExcerpt)
         .collect(Collectors.toList());
+  }
+
+  public Boolean deleteArticle(Long id) {
+    articleService.delete(id);
+    return true;
+  }
+
+  public boolean grant(String uid, String roleId) {
+    return userService.grant(uid, roleId);
   }
 
   /**

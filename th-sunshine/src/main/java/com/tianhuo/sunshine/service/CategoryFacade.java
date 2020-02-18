@@ -17,4 +17,25 @@ public interface CategoryFacade {
    * @return list of category dto
    */
   HttpResultWrapper<List<CategoryDto>> list();
+
+  /**
+   * add category
+   * @param categoryDto category dto
+   * @return success true
+   */
+  HttpResultWrapper<Boolean> add(CategoryDto categoryDto);
+
+  /**
+   * modify category
+   * @param categoryDto category dto
+   * @return success true
+   */
+  HttpResultWrapper<Boolean> update(CategoryDto categoryDto);
+
+  /**
+   * delete category
+   * @param id category id
+   * @return success true
+   */
+  HttpResultWrapper<Boolean> delete(String id);
 }

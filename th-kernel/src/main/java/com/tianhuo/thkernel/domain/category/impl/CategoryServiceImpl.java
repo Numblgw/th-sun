@@ -5,9 +5,9 @@ import com.tianhuo.thkernel.domain.category.Category;
 import com.tianhuo.thkernel.domain.category.CategoryService;
 import com.tianhuo.thkernel.domain.category.repository.CategoryRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+
+import javax.annotation.Resource;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import java.util.List;
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
-  @Autowired
+  @Resource
   private CategoryRepository categoryRepository;
 
   @Override

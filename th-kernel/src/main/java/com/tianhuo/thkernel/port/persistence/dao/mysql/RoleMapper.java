@@ -2,6 +2,7 @@ package com.tianhuo.thkernel.port.persistence.dao.mysql;
 
 import com.tianhuo.thkernel.port.persistence.entity.RoleDO;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -46,4 +47,12 @@ public interface RoleMapper {
    */
   @Select("select id, name, description from `role`")
   List<RoleDO> list();
+
+  /**
+   * delete role by id
+   * @param id id
+   * @return success 1
+   */
+  @Delete("delete from `role` where id = #{id}")
+  int delete(Integer id);
 }

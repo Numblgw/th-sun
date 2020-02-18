@@ -1,5 +1,7 @@
 package com.tianhuo.thkernel.domain.category.repository;
 
+import com.tianhuo.sunshine.dto.CategoryDto;
+import com.tianhuo.thcommon.utils.StringUtil;
 import com.tianhuo.thkernel.domain.category.Category;
 import com.tianhuo.thkernel.port.persistence.entity.CategoryDO;
 
@@ -27,5 +29,19 @@ public class CategoryConverter {
     categoryEntity.setId(category.getId());
     categoryEntity.setName(category.getName());
     return categoryEntity;
+  }
+
+  public static CategoryDto toDto(Category category) {
+    return CategoryDto.builder()
+        .id(String.valueOf(category.getId()))
+        .name(category.getName())
+        .build();
+  }
+
+  public static Category convert(CategoryDto categoryDto) {
+    return new Category(
+        StringUtil.convertToLong(categoryDto.getId(), 0L).intValue(),
+        categoryDto.getName()
+    );
   }
 }

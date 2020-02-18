@@ -18,7 +18,6 @@
     <dubbo.version>2.6.5</dubbo.version>
     <dubbo-springboot.version>0.2.1.RELEASE</dubbo-springboot.version>
     <curator.version>4.2.0</curator.version>
-    <th-sunshine.version>2020012501</th-sunshine.version>
   </properties>
 
   <dependencies>

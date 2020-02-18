@@ -12,6 +12,7 @@ import lombok.ToString;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -45,6 +46,12 @@ public class User {
     this.registeredTime = registeredTime;
     this.roleId = roleId;
     check();
+  }
+
+  public void setIdIfAbsent(String id) {
+    if(StringUtils.isEmpty(this.id)) {
+      this.id = id;
+    }
   }
 
   /**

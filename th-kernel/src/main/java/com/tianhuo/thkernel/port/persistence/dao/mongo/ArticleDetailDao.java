@@ -9,6 +9,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+
 /**
  * article dao (MongoDB)
  * @author liguowei
@@ -22,7 +24,7 @@ public class ArticleDetailDao {
    */
   private static final String COLLECTION_NAME = "tianhuo_article";
 
-  @Autowired
+  @Resource
   private MongoTemplate mongoTemplate;
 
   /**
@@ -35,14 +37,10 @@ public class ArticleDetailDao {
 
   /**
    * update article detail
-   * @param articleDetail
+   * @param articleDetail article detail do
    */
   @Transactional(rollbackFor = RuntimeException.class)
   public void update(ArticleDetailDO articleDetail) {
-    mongoTemplate.findAndRemove(
-        new Query(Criteria.where("id").is(articleDetail.getId())),
-        ArticleDetailDO.class, COLLECTION_NAME
-    );
     mongoTemplate.save(articleDetail, COLLECTION_NAME);
   }
 
@@ -51,7 +49,7 @@ public class ArticleDetailDao {
    * @param id article id
    */
   public void delete(String id) {
-    mongoTemplate.findAndRemove(
+    mongoTemplate.remove(
         new Query(Criteria.where("id").is(id)),
         ArticleDetailDO.class, COLLECTION_NAME
     );

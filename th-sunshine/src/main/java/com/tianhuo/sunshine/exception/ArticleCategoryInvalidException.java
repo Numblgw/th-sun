@@ -1,5 +1,6 @@
 package com.tianhuo.sunshine.exception;
 
+
 import com.tianhuo.thcommon.exception.TianHuoBaseException;
 
 /**

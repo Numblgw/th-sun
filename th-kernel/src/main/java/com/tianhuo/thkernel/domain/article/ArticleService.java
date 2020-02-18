@@ -66,4 +66,10 @@ public interface ArticleService {
    * @return list of article
    */
   List<Article> queryByCategoryId(String categoryId, Long start, Integer limit);
+
+  /**
+   * count article total
+   * @return article total count
+   */
+  Long countArticle();
 }

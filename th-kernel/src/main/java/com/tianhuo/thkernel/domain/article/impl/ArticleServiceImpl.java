@@ -96,4 +96,9 @@ public class ArticleServiceImpl implements ArticleService {
   public List<Article> queryByCategoryId(String categoryId, Long start, Integer limit) {
     return articleRepository.queryByCategoryId(categoryId, start, limit);
   }
+
+  @Override
+  public Long countArticle() {
+    return articleRepository.countArticle();
+  }
 }

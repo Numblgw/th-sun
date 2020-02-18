@@ -1,7 +1,6 @@
 package com.tianhuo.sunshine.service;
 
 import com.tianhuo.sunshine.dto.UserDto;
-import com.tianhuo.sunshine.enums.UserOperateResult;
 import com.tianhuo.thcommon.dto.HttpResultWrapper;
 
 import java.util.Collection;
@@ -41,4 +40,25 @@ public interface UserFacade {
    * @return list of user
    */
   HttpResultWrapper<List<UserDto>> queryUsers(Collection<String> ids);
+
+  /**
+   * query user list
+   * @return list of user
+   */
+  HttpResultWrapper<List<UserDto>> userList();
+
+  /**
+   * delete user by id
+   * @param id user id
+   * @return success true
+   */
+  HttpResultWrapper<Boolean> delete(String id);
+
+  /**
+   * 授予用户权限，也就是修改用户的角色
+   * @param uid user id
+   * @param roleId role id
+   * @return success true
+   */
+  HttpResultWrapper<Boolean> grant(String uid, String roleId);
 }

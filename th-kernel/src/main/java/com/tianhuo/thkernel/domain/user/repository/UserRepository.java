@@ -40,10 +40,13 @@ public class UserRepository {
    * @return if success return user id
    */
   public Long add(User user) {
-    userMapper.insert(UserConverter.toUserDO(user));
-    userRedisTemplate.opsForValue()
-        .set(cacheIdKey(user.getId()), UserConverter.toUserCache(user), timeout(), TimeUnit.MILLISECONDS);
-    return StringUtil.convertToLong(user.getId(), 0L);
+    UserDO userToInsert = UserConverter.toUserDO(user);
+    if(userMapper.insert(userToInsert) == 1) {
+      userRedisTemplate.opsForValue()
+          .set(cacheIdKey(String.valueOf(userToInsert.getId())), UserConverter.toUserCache(user), timeout(), TimeUnit.MILLISECONDS);
+      user.setIdIfAbsent(String.valueOf(userToInsert.getId()));
+    }
+    return userToInsert.getId();
   }
 
   /**
@@ -132,6 +135,27 @@ public class UserRepository {
     }
     res.addAll(unCache);
     return res;
+  }
+
+  /**
+   * query user list
+   * @return list of user
+   */
+  public List<User> userList() {
+    return UserConverter.convert(userMapper.userList());
+  }
+
+  /**
+   * modify user role
+   * @param uid uid
+   * @param roleId role id
+   * @return success true
+   */
+  public boolean modifyUserRoleId(String uid, String roleId) {
+    return userMapper.modifyUserRole(
+        StringUtil.convertToLong(uid, 0L),
+        StringUtil.convertToLong(roleId, 0L).intValue()
+    ) > 0;
   }
 
   /**

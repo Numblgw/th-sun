@@ -146,6 +146,14 @@ public class ArticleRepository {
   }
 
   /**
+   * count article
+   * @return article count
+   */
+  public Long countArticle() {
+    return articleExcerptMapper.countArticle();
+  }
+
+  /**
    * 生成单个实体缓存的 key
    * @param id id
    * @return key in cache

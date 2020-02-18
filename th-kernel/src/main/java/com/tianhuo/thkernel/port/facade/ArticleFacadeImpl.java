@@ -9,9 +9,11 @@ import com.tianhuo.thkernel.application.UserApplicationService;
 import com.tianhuo.thkernel.application.cmd.ArticleUpdateCmd;
 import com.tianhuo.thkernel.domain.article.Article;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -23,7 +25,7 @@ import java.util.List;
 @Component
 public class ArticleFacadeImpl implements ArticleFacade {
 
-  @Autowired
+  @Resource
   private UserApplicationService applicationService;
 
   @Override
@@ -38,31 +40,36 @@ public class ArticleFacadeImpl implements ArticleFacade {
       return new HttpResultWrapper<ArticleDto>()
           .fail(HttpResultStatus.INVALID_PARAM);
     }
-    articleDto.setUserOperateResult(
-        applicationService.publishing(new Article(
-            articleDto.getId(),
-            articleDto.getSenderId(),
-            articleDto.getTitle(),
-            articleDto.getCategoryId(),
-            articleDto.getTags(),
-            articleDto.getDetail(),
-            articleDto.getCreateAt(),
-            articleDto.getModifyAt()
-        ))
+    articleDto.setCreateAt(LocalDateTime.now());
+    Article article = new Article(
+        articleDto.getId(),
+        articleDto.getSenderId(),
+        articleDto.getTitle(),
+        articleDto.getCategoryId(),
+        articleDto.getTags(),
+        articleDto.getDetail(),
+        articleDto.getCreateAt(),
+        articleDto.getModifyAt()
     );
+    articleDto.setUserOperateResult(applicationService.publishing(article));
+    articleDto.setId(article.getId());
     return new HttpResultWrapper<ArticleDto>().success(articleDto);
   }
 
   @Override
   public HttpResultWrapper<ArticleDto> update(ArticleDto articleDto) {
-    articleDto.setUserOperateResult(applicationService.updateArticle(createUpdateCmd(articleDto)));
+    try {
+      articleDto = applicationService.updateArticle(createUpdateCmd(articleDto));
+    }catch(Exception e) {
+      articleDto = null;
+    }
     return new HttpResultWrapper<ArticleDto>().success(articleDto);
   }
 
   @Override
   public HttpResultWrapper<List<ArticleDto>> list(Long start, Integer limit) {
     return new HttpResultWrapper<List<ArticleDto>>()
-        .success(applicationService.articleList(start, limit));
+        .success(applicationService.articleList(start, limit), applicationService.articleCount());
   }
 
   @Override
@@ -70,6 +77,12 @@ public class ArticleFacadeImpl implements ArticleFacade {
       Integer limit) {
     return new HttpResultWrapper<List<ArticleDto>>()
         .success(applicationService.findArticleByCategoryId(categoryId, start, limit));
+  }
+
+  @Override
+  public HttpResultWrapper<Boolean> delete(Long id) {
+    Boolean result = applicationService.deleteArticle(id);
+    return new HttpResultWrapper<Boolean>().success(result);
   }
 
   /**

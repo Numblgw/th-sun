@@ -49,4 +49,18 @@ public interface UserService {
    * @return list of user domain object
    */
   List<User> queryUsers(Collection<String> ids);
+
+  /**
+   * query user list
+   * @return list of user
+   */
+  List<User> userList();
+
+  /**
+   * grant
+   * @param uid 用户 id
+   * @param roleId 角色 id
+   * @return success true
+   */
+  boolean grant(String uid, String roleId);
 }

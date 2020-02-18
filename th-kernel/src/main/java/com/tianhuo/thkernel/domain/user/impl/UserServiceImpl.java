@@ -4,9 +4,9 @@ import com.tianhuo.thkernel.domain.user.User;
 import com.tianhuo.thkernel.domain.user.UserService;
 import com.tianhuo.thkernel.domain.user.repository.UserRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
-  @Autowired
+  @Resource
   private UserRepository userRepository;
 
   @Override
@@ -57,5 +57,15 @@ public class UserServiceImpl implements UserService {
   @Override
   public List<User> queryUsers(Collection<String> ids) {
     return userRepository.queryUsers(ids);
+  }
+
+  @Override
+  public List<User> userList() {
+    return userRepository.userList();
+  }
+
+  @Override
+  public boolean grant(String uid, String roleId) {
+    return userRepository.modifyUserRoleId(uid, roleId);
   }
 }

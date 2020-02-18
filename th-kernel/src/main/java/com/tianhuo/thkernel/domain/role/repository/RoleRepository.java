@@ -7,6 +7,8 @@ import com.tianhuo.thcommon.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +20,7 @@ import java.util.stream.Collectors;
 @Repository
 public class RoleRepository {
 
-  @Autowired
+  @Resource
   private RoleMapper roleMapper;
 
   /**
@@ -56,5 +58,9 @@ public class RoleRepository {
     return RoleConverter.convert(
         roleMapper.findById(StringUtil.convertToLong(id, 0).intValue())
     );
+  }
+
+  public boolean delete(String id) {
+    return roleMapper.delete(StringUtil.convertToLong(id, 0L).intValue()) > 0;
   }
 }

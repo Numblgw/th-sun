@@ -1,8 +1,13 @@
 package com.tianhuo.thkernel.domain.role.repository;
 
+import com.tianhuo.sunshine.dto.RoleDto;
 import com.tianhuo.thkernel.domain.role.Role;
 import com.tianhuo.thkernel.port.persistence.entity.RoleDO;
 import com.tianhuo.thcommon.utils.StringUtil;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *      convert
@@ -38,5 +43,23 @@ public class RoleConverter {
     roleEntity.setName(role.getName());
     roleEntity.setDescription(role.getDescription());
     return roleEntity;
+  }
+
+  public static RoleDto toDto(Role role) {
+    return RoleDto.builder()
+        .id(role.getId())
+        .name(role.getName())
+        .description(role.getDescription())
+        .build();
+  }
+
+  public static List<RoleDto> toDto(Collection<Role> collection) {
+    return collection.stream()
+        .map(RoleConverter::toDto)
+        .collect(Collectors.toList());
+  }
+
+  public static Role convert(RoleDto roleDto) {
+    return new Role(roleDto.getId(), roleDto.getName(), roleDto.getDescription());
   }
 }

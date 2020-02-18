@@ -22,4 +22,10 @@ public interface SessionService {
    * @return login user info
    */
   SessionId getSession(String sessionId);
+
+  /**
+   * remove session
+   * @param sessionId session id
+   */
+  void removeSession(String sessionId);
 }

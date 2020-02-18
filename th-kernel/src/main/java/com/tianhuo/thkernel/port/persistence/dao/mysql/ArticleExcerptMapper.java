@@ -2,11 +2,13 @@ package com.tianhuo.thkernel.port.persistence.dao.mysql;
 
 import com.tianhuo.thkernel.port.persistence.entity.ArticleExcerptDO;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -63,12 +65,21 @@ public interface ArticleExcerptMapper {
    * update
    * @param excerptDO data object
    */
+  @Update("update article_excerpt "
+      + "set "
+      + "title = #{title}, "
+      + "category_id = #{categoryId}, "
+      + "tags = #{tags}, "
+      + "excerpt = #{excerpt}, "
+      + "modify_at = #{modifyAt} "
+      + "where id = #{id} ")
   void update(ArticleExcerptDO excerptDO);
 
   /**
    * delete article by id
    * @param id article id
    */
+  @Delete("delete from article_excerpt where id = #{id}")
   void delete(Long id);
 
   /**
@@ -111,4 +122,11 @@ public interface ArticleExcerptMapper {
           + "where category_id = #{categoryId} limit #{start}, #{limit}"
   )
   List<ArticleExcerptDO> queryByCategoryId(Integer categoryId, Long start, Integer limit);
+
+  /**
+   * count article
+   * @return article total count
+   */
+  @Select("select count(*) from article_excerpt")
+  Long countArticle();
 }

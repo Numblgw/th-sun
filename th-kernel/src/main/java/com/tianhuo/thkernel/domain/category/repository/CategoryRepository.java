@@ -6,6 +6,8 @@ import com.tianhuo.thkernel.port.persistence.dao.mysql.CategoryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,12 +18,12 @@ import java.util.stream.Collectors;
 @Repository
 public class CategoryRepository {
 
-  @Autowired
+  @Resource
   private CategoryMapper categoryMapper;
 
   /**
-   * get CategoryDO list and convert to Category list
-   * @return
+   * get Category list and convert to Category list
+   * @return list of category
    */
   public List<Category> list() {
     return categoryMapper.list().stream()

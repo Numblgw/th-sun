@@ -64,7 +64,7 @@ public interface UserMapper {
    * delete user by id
    * @param id user id
    */
-  @Delete("update `users` set if_delete = 1 where id = #{id}")
+  @Update("update `users` set if_delete = 1 where id = #{id}")
   void delete(Long id);
 
   /**
@@ -82,4 +82,23 @@ public interface UserMapper {
       + "and if_delete = 0 "
       + "</script> ")
   List<UserDO> queryUserByIds(List<Integer> ids);
+
+  /**
+   * query user list
+   * @return list of user
+   */
+  @Select("select "
+      + "id, username, password, nickname, registered_time, role_id "
+      + "from `users` "
+      + "where if_delete = 0")
+  List<UserDO> userList();
+
+  /**
+   * modify user role
+   * @param uid user id
+   * @param roleId role id
+   * @return success 1
+   */
+  @Update("update `users` set role_id = #{roleId} where uid = #{uid} ")
+  int modifyUserRole(Long uid, Integer roleId);
 }

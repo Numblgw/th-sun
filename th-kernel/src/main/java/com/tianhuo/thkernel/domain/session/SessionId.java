@@ -39,9 +39,6 @@ public class SessionId {
    */
   private Long createTime;
 
-  private SessionId() {
-
-  }
 
   /**
    * create session domain object
@@ -51,7 +48,7 @@ public class SessionId {
    * @param createTime create time
    * @return session domain object
    */
-  public static SessionId createSession(String sessionId, User user, Long lifeTime, Long createTime) {
+  static SessionId createSession(String sessionId, User user, Long lifeTime, Long createTime) {
     SessionId session = new SessionId();
     session.sessionId = sessionId;
     session.user = user;
@@ -88,7 +85,7 @@ public class SessionId {
    */
   public boolean isValid() {
     return this != INVALID_SESSION
-        && (System.currentTimeMillis() - this.createTime) > this.lifeTime;
+        && (System.currentTimeMillis() - this.createTime) < this.lifeTime;
   }
 
   private boolean check() {
