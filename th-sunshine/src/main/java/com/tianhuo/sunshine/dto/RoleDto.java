@@ -3,6 +3,8 @@ package com.tianhuo.sunshine.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * role dto
  * @author liguowei
@@ -10,8 +12,9 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class RoleDto {
+public class RoleDto implements Serializable {
 
+  private static final long serialVersionUID = 2441738259730060183L;
   /**
    * role id
    */

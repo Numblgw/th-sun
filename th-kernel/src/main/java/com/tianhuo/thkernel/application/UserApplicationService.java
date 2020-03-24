@@ -212,9 +212,16 @@ public class UserApplicationService {
    * @return list of article dto
    */
   public List<ArticleDto> findArticleByCategoryId(String categoryId, Long start, Integer limit) {
-    return articleService.queryByCategoryId(categoryId, start, limit).stream()
-        .map(this::convertByArticleExcerpt)
-        .collect(Collectors.toList());
+    List<ArticleDto> result = new ArrayList<>(null == limit ? 10 : limit);
+    List<Article> articles = articleService.queryByCategoryId(categoryId, start, limit);
+    for (Article article : articles) {
+      Category category = categoryService.findById(article.getCategoryId());
+      if(null == category) {
+        throw new ArticleCategoryInvalidException("文章分类没找到，文章id：" + article.getId());
+      }
+      result.add(assemble(article, category));
+    }
+    return result;
   }
 
   public Boolean deleteArticle(Long id) {

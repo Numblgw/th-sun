@@ -31,7 +31,7 @@ public class Article{
   /**
    * article excerpt length
    */
-  private static final int ARTICLE_EXCERPT_LENGTH = 20;
+  private static final int ARTICLE_EXCERPT_LENGTH = 60;
 
   /**
    * string tag split by

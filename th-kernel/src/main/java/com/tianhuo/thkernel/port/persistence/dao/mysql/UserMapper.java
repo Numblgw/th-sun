@@ -99,6 +99,6 @@ public interface UserMapper {
    * @param roleId role id
    * @return success 1
    */
-  @Update("update `users` set role_id = #{roleId} where uid = #{uid} ")
+  @Update("update `users` set role_id = #{roleId} where id = #{uid} ")
   int modifyUserRole(Long uid, Integer roleId);
 }

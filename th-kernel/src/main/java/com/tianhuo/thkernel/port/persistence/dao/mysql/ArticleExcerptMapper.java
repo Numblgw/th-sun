@@ -44,8 +44,9 @@ public interface ArticleExcerptMapper {
    */
   @Select(
       "select id, sender_id, title, category_id, tags, excerpt, create_at, modify_at "
-      + "from article_excerpt "
-      + "limit #{start}, #{limit} "
+          + "from article_excerpt "
+          + "order by id desc "
+          + "limit #{start}, #{limit} "
   )
   List<ArticleExcerptDO> queryByBatch(Long start, Integer limit);
 
@@ -119,7 +120,9 @@ public interface ArticleExcerptMapper {
   @Select(
       "select id, sender_id, title, category_id, tags, excerpt, create_at, modify_at "
           + "from article_excerpt "
-          + "where category_id = #{categoryId} limit #{start}, #{limit}"
+          + "where category_id = #{categoryId} "
+          + "order by id desc "
+          + "limit #{start}, #{limit} "
   )
   List<ArticleExcerptDO> queryByCategoryId(Integer categoryId, Long start, Integer limit);
 
