@@ -24,7 +24,7 @@ spring:
       port: 27017
       database: tianhuo
   redis:
-    host: 47.102.195.50
+    host: 127.0.0.1
     port: 6379
 
 
