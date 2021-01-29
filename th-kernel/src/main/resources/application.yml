@@ -28,6 +28,7 @@ spring:
     port: 6379
 
 
+
 mybatis:
   type-aliases-package: com.tianhuo.thkernel.port.persistence.entity
   configuration:
