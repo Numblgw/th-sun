@@ -27,8 +27,6 @@ spring:
     host: 127.0.0.1
     port: 6379
 
-
-
 mybatis:
   type-aliases-package: com.tianhuo.thkernel.port.persistence.entity
   configuration:
